@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>T -</title>
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@200;400;600&display=swap");
+
+		* {
+			user-select: none;
+		}
+
+		html, body {
+			display: flex;
+			height: 100vh;
+			width: 100vw;
+			padding: 0;
+			outline: 0;
+			margin: 0;
+			border: 0;
+		}
+
+		body {
+			background-color: #000000;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.clock {
+			display: flex;
+			color: #ffffff;
+			font-family: "Azeret Mono";
+			font-weight: 600;
+			font-size: calc(100vw/7);
+		}
+	</style>
+</head>
+<body>
+	<div class="clock"></div>
+</body>
+<script type="text/javascript">
+	document.body.onclick = function() {
+		if (!document.fullscreen) {
+			document.body.requestFullscreen();
+		}
+	};
+
+	function format(str, len = 2) {
+		str = str.toString();
+
+		while (str.length < len) {
+			str = "0" + str;
+		}
+	
+		return str;
+	}
+
+	var clock = document.querySelector(".clock");
+
+	var b = new Date(2023, 11, 5, 12, 0, 0, 0).getTime();
+
+	function update() {
+		var l = b - Date.now();
+
+		var h = Math.floor(l / (60 * 60 * 1000));
+		l -= h * 60 * 60 * 1000;
+
+		var m = Math.floor(l / (60 * 1000));
+		l -= m * 60 * 1000;
+
+		var s = Math.floor(l / 1000);
+		l -= s * 1000;
+
+		var t = [
+			format(h),
+			format(m),
+			format(s)
+		];
+
+		clock.textContent = t.join(":");
+	}
+
+	var k = Date.now();
+
+	k = k.toString();
+
+	k = k.slice(-3);
+
+	k = parseInt(k);
+
+	k = 1000 - k;
+
+	update();
+
+	setTimeout(function() {
+		setInterval(update, 1000);
+	}, k);
+</script>
+</html>
