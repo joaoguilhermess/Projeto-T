@@ -32,7 +32,7 @@
 			color: #ffffff;
 			font-family: "Azeret Mono";
 			font-weight: 600;
-			font-size: calc(100vw/7);
+			font-size: calc(100vw/7.5);
 		}
 	</style>
 </head>
@@ -58,10 +58,13 @@
 
 	var clock = document.querySelector(".clock");
 
-	var b = new Date(2023, 11, 5, 12, 0, 0, 0).getTime();
+	var b = new Date(2023, (11 - 1), 5, 12, 0, 0, 0).getTime();
 
 	function update() {
 		var l = b - Date.now();
+
+		var d = Math.floor(l / (24 * 60 * 60 * 1000));
+		l -= d * 24 * 60 * 60 * 1000;
 
 		var h = Math.floor(l / (60 * 60 * 1000));
 		l -= h * 60 * 60 * 1000;
@@ -73,6 +76,7 @@
 		l -= s * 1000;
 
 		var t = [
+			format(d),
 			format(h),
 			format(m),
 			format(s)
@@ -94,7 +98,7 @@
 	update();
 
 	setTimeout(function() {
-		setInterval(update, 1000);
+		setInterval(update, 500);
 	}, k);
 </script>
 </html>
