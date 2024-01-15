@@ -58,7 +58,9 @@
 
 	var clock = document.querySelector(".clock");
 
-	var b = new Date(2023, (11 - 1), 5, 12, 0, 0, 0).getTime();
+	// var b = new Date(year, (month - 1), day, hour, minute, second, millisecond).getTime();
+
+	var b = new Date(2024, (1 - 1), 16, 0, 0, 0, 0).getTime();
 
 	function update() {
 		var l = b - Date.now();
