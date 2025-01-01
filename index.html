@@ -9,6 +9,7 @@
 
 		* {
 			user-select: none;
+			cursor: none;
 		}
 
 		html, body {
@@ -32,7 +33,6 @@
 			color: #ffffff;
 			font-family: "Azeret Mono";
 			font-weight: 600;
-			font-size: calc(100vw/7.5);
 		}
 	</style>
 </head>
@@ -40,67 +40,98 @@
 	<div class="clock"></div>
 </body>
 <script type="text/javascript">
-	document.body.onclick = function() {
-		if (!document.fullscreen) {
-			document.body.requestFullscreen();
-		}
-	};
+	class T {
+		static Init() {
+			this.clock = document.querySelector(".clock");
 
-	function format(str, len = 2) {
-		str = str.toString();
+			this.addFullscreen();
 
-		while (str.length < len) {
-			str = "0" + str;
+			this.setEvent(2025, 1, 1);
+
+			this.title = "FELIZ ANO NOVO";
+
+			this.start();
 		}
-	
-		return str;
+
+		static addFullscreen() {
+			document.body.onclick = function() {
+				if (!document.fullscreen) {
+					document.body.requestFullscreen();
+				}
+			};
+		}
+
+		static setEvent(year = 0, month = 0, date = 0, hour = 0, minute = 0, second = 0, millisecond = 0) {
+			this.event = (new Date(year, month - 1, date, hour, minute, second, millisecond)).getTime();
+		}
+
+		static format(str, len = 2) {
+			str = str.toString();
+
+			while (str.length < len) {
+				str = "0" + str;
+			}
+		
+			return str;
+		}
+
+		static setText(text) {
+			this.clock.style.fontSize = "calc(100vw/" + 7.5 / 11 * text.length + ")";
+
+			this.clock.textContent = text;
+		}
+
+		static update() {
+			var scales = [1000, 60, 60, 24];
+
+			for (let i = 1; i < scales.length; i++) {
+				scales[i] *= scales[i - 1];
+			}
+
+			var left = this.event - Date.now();
+
+			if (left <= 0) {
+				return this.setText(this.title);
+			}
+
+			var time = [];
+
+			for (let i = scales.length - 1; i >= 0; i--) {
+				var k = Math.floor(left / scales[i]);
+
+				if (k || time[0]) {
+					left -= k * scales[i];
+
+					time.push(this.format(k));
+				}
+			}
+
+			this.setText(time.join(":"));
+		}
+
+		static start() {
+			var k = Date.now();
+
+			k = k.toString();
+
+			k = k.slice(-3);
+
+			k = parseInt(k);
+
+			k = 1000 - k;
+
+			this.update();
+
+			var context = this;
+
+			setTimeout(function() {
+				setInterval(function() {
+					context.update();
+				}, 1000 / 2);
+			}, k);
+		}
 	}
 
-	var clock = document.querySelector(".clock");
-
-	// var b = new Date(year, (month - 1), day, hour, minute, second, millisecond).getTime();
-
-	var b = new Date(2024, (1 - 1), 30, 9, 0, 0, 0).getTime();
-
-	function update() {
-		var l = b - Date.now();
-
-		var d = Math.floor(l / (24 * 60 * 60 * 1000));
-		l -= d * 24 * 60 * 60 * 1000;
-
-		var h = Math.floor(l / (60 * 60 * 1000));
-		l -= h * 60 * 60 * 1000;
-
-		var m = Math.floor(l / (60 * 1000));
-		l -= m * 60 * 1000;
-
-		var s = Math.floor(l / 1000);
-		l -= s * 1000;
-
-		var t = [
-			format(d),
-			format(h),
-			format(m),
-			format(s)
-		];
-
-		clock.textContent = t.join(":");
-	}
-
-	var k = Date.now();
-
-	k = k.toString();
-
-	k = k.slice(-3);
-
-	k = parseInt(k);
-
-	k = 1000 - k;
-
-	update();
-
-	setTimeout(function() {
-		setInterval(update, 500);
-	}, k);
+	T.Init();
 </script>
 </html>
